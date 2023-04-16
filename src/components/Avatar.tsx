@@ -1,6 +1,7 @@
 import styles from './Avatar.module.css'
+import {ImgHTMLAttributes} from "react";
 
-interface AvatarProps {
+interface AvatarProps extends ImgHTMLAttributes<HTMLImageElement>{
     hasBorder?: boolean;
     src: string;
     alt?: string
@@ -8,7 +9,13 @@ interface AvatarProps {
 
 // O ? indica que a propriedade é opcional
 
-export function Avatar({ hasBorder = true, src, alt}: AvatarProps) {
+// O componente avatar retorna uma tag html. Da maneira que eu fiz posso usar apenas as props src e alt, mas uma tag
+// img possui outras propriedade.
+// Eu não preciso passar uma por uma, posso simplesmente extends de ImgHTMLAttributes<HTMLImageElement>
+
+//Nos parâmetros da função abaixo, eu setei por default hasBorder como true e chamei todas as demais props através do operador spread
+
+export function Avatar({ hasBorder = true, ...props}: AvatarProps) {
 
     // Princípio da desestruturação. Em JS posso desestruturar um objeto e pegar apenas as propriedades que eu quero
     // const {hasBorder, src} = props
@@ -19,7 +26,7 @@ export function Avatar({ hasBorder = true, src, alt}: AvatarProps) {
     return (
         <img
             className={hasBorder ? styles.avatarWithBorder : styles.avatar}
-            src={src}
+            {...props} //Agora eu chamo todas as demais props através do operador spread
         />
     )
 }
