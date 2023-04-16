@@ -3,9 +3,27 @@ import {Comment} from "./Comment";
 import {Avatar} from "./Avatar";
 import {format, formatDistanceToNow} from "date-fns";
 import ptBR from "date-fns/locale/pt-BR";
-import {useState} from "react";
+import {useState, FormEvent, InvalidEvent, ChangeEvent} from "react";
 
-export function Post({author, publishedAt, content}) {
+interface Author {
+    name: string;
+    role: string;
+    avatarUrl: string;
+}
+
+interface Content {
+    type: 'paragraph' | 'link';
+    content: string;
+}
+
+interface PostProps {
+    author: Author;
+    publishedAt: Date;
+    content: Content[];
+}
+
+
+export function Post({author, publishedAt, content}: PostProps) {
 
     const publishedAtFormatted = format(publishedAt, "d 'de' MM 'às' HH:mm'h'", {
         locale: ptBR
@@ -19,25 +37,27 @@ export function Post({author, publishedAt, content}) {
     const [comments, setComments] = useState(['Post muito bacana, hein']);
     const [newCommentText, setNewCommentText] = useState('');
 
-    function handleNewCommentTextChange(event) {
-        setNewCommentText(event.target.value);
-    }
-
-    function handleNewCommentSubmit(event) {
+    function handleCreateNewComment(event: FormEvent) {
+        // FormEvent porque é evento de um formulário
         event.preventDefault();
         setComments([...comments, newCommentText]);
         setNewCommentText('')
-        event.target.setCustomValidity('')
     }
 
-    function deleteComment(commentToDelete) {
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+        //Evento que acontece no onChange do input por isso o parâmetro HTMLInputElement que nada mais é que um generic
+        event.target.setCustomValidity('');
+        setNewCommentText(event.target.value);
+    }
+
+    function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>){
+        event.target.setCustomValidity("Escreva um comentário antes de publicar");
+    }
+
+    function deleteComment(commentToDelete: string) {
         //Cria uma nova lista de comentários, sem o comentário que quero deletar
         const commentsWithoutDeletedOne = comments.filter(comment => comment !== commentToDelete);
         setComments(commentsWithoutDeletedOne);
-    }
-
-    function handleNewCommentInvalid(event){
-        event.target.setCustomValidity("Escreva um comentário antes de publicar");
     }
 
     const isNewCommentEmpty = newCommentText.length === 0;
@@ -68,7 +88,7 @@ export function Post({author, publishedAt, content}) {
             </div>
 
             <form
-                onSubmit={handleNewCommentSubmit}
+                onSubmit={handleCreateNewComment}
                 className={styles.commentForm}
             >
                 <strong>Deixe seu feedback</strong>
@@ -77,7 +97,7 @@ export function Post({author, publishedAt, content}) {
                     name="comment"
                     placeholder="Deixe um comentário"
                     value={newCommentText}
-                    onChange={handleNewCommentTextChange}
+                    onChange={handleNewCommentChange}
                     onInvalid={handleNewCommentInvalid}
                     required
                 />

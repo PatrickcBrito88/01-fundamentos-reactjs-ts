@@ -1,6 +1,14 @@
 import styles from './Avatar.module.css'
 
-export function Avatar({ hasBorder = true, src}) {
+interface AvatarProps {
+    hasBorder?: boolean;
+    src: string;
+    alt?: string
+}
+
+// O ? indica que a propriedade é opcional
+
+export function Avatar({ hasBorder = true, src, alt}: AvatarProps) {
 
     // Princípio da desestruturação. Em JS posso desestruturar um objeto e pegar apenas as propriedades que eu quero
     // const {hasBorder, src} = props

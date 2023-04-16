@@ -1,10 +1,17 @@
 import styles from './Comment.module.css';
 import {ThumbsUp, Trash} from "phosphor-react";
-import {Avatar} from "./Avatar.tsx";
+import {Avatar} from "./Avatar";
 import {useState} from "react";
-export function Comment({content, onCommentDelete}){
 
-    function handleDeleteComment(event){
+interface CommentProps {
+    content: string;
+    onCommentDelete: (commentToDelete: string) => void;
+    //Na tipagem da função eu descrevo que é uma função (), que retorna void e possui os parâmetros que eu quero daquele tipo
+}
+
+export function Comment({content, onCommentDelete}: CommentProps){
+
+    function handleDeleteComment(){
         onCommentDelete(content);
     }
 
@@ -13,7 +20,7 @@ export function Comment({content, onCommentDelete}){
     //Sempre que for atualizar uma informação e essa informação depende do valor
     // que tinha anteriormente, é necessário usar uma função como parâmetro do set
     //Exemplo: setLikeCount((state) => state + 1);
-    function handleLikeComment(event){
+    function handleLikeComment(){
         setLikeCount(likeCount + 1);
     }
 
